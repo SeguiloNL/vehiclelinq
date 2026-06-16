@@ -1,9 +1,9 @@
 :80 {
-  handle_path /api/* {
+  handle /api/* {
     reverse_proxy api:3000
   }
 
-  handle_path /health* {
+  handle /health* {
     reverse_proxy api:3000
   }
 
