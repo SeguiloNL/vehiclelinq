@@ -25,18 +25,56 @@ Self-hosted multi-company voertuigvolgsysteem met live kaartweergave, Teltonika 
 
 Voor productie met grotere vloot is `8 vCPU`, `16 GB RAM` en NVMe-opslag aan te raden.
 
-## Installatie
+## Benodigde poorten
 
-1. Clone de repository.
-2. Controleer `.env.example` en kopieer naar `.env` indien nodig.
-3. Voer het installatiescript uit:
+- `80/tcp` voor HTTP
+- `443/tcp` voor HTTPS
+- `5027/tcp` voor Teltonika TCP ingest
+- `5027/udp` voor Teltonika UDP ingest
+
+## Snelle installatie
+
+1. Clone de repository:
+
+```bash
+git clone <REPOSITORY_URL> vehiclelinq
+cd vehiclelinq
+```
+
+2. Maak een `.env` bestand:
+
+```bash
+cp .env.example .env
+```
+
+3. Controleer minimaal deze waarden in `.env`:
+
+- `POSTGRES_PASSWORD`
+- `JWT_SECRET`
+- `JWT_REFRESH_SECRET`
+- `BOOTSTRAP_SUPERADMIN_EMAIL`
+- `BOOTSTRAP_SUPERADMIN_PASSWORD`
+
+4. Maak het installatiescript uitvoerbaar en voer het uit:
 
 ```bash
 chmod +x setup.sh
 ./setup.sh
 ```
 
-4. Open daarna [http://localhost](http://localhost).
+5. Controleer of de services draaien:
+
+```bash
+docker compose ps
+```
+
+6. Open daarna [http://localhost](http://localhost) en log in met de bootstrap-admin.
+
+## Uitgebreide stap-voor-stap handleiding
+
+Voor de volledige serverinstallatie, verificatie, troubleshooting, updates en back-ups zie:
+
+- [docs/installatie-handleiding.md](file:///Users/bas/Documents/trae_projects/vehiclelinq/docs/installatie-handleiding.md)
 
 ## Bootstrap login
 
@@ -56,6 +94,17 @@ Na installatie beheer je via de webinterface:
 - kaartprovider en tile-URL
 - retentie-instellingen
 - modules per bedrijf
+
+## Verificatie na installatie
+
+Controleer minimaal:
+
+```bash
+docker compose ps
+curl http://localhost/health
+curl http://localhost:3000/health
+curl http://localhost:3002/health
+```
 
 ## Ontwikkelcommando's
 
@@ -83,3 +132,9 @@ Maak periodiek back-ups van:
 2. Update `.env` indien nieuwe variabelen zijn toegevoegd.
 3. Voer `docker compose up -d --build` opnieuw uit.
 4. Draai indien nodig de SQL-migraties opnieuw met `setup.sh`.
+
+## Operationeel runbook
+
+Voor operationele checks en incidentrespons zie:
+
+- [docs/architecture/operational-runbook.md](file:///Users/bas/Documents/trae_projects/vehiclelinq/docs/architecture/operational-runbook.md)

@@ -10,6 +10,12 @@ if [[ ! -f ".env" ]]; then
   echo ".env aangemaakt vanuit .env.example"
 fi
 
+# Laad .env zodat shell-commando's dezelfde waarden gebruiken als Docker Compose.
+set -a
+# shellcheck disable=SC1091
+source .env
+set +a
+
 if ! command -v docker >/dev/null 2>&1; then
   echo "Docker is niet geinstalleerd. Installeer Docker Engine en Docker Compose plugin eerst."
   exit 1

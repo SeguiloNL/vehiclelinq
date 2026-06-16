@@ -1,5 +1,9 @@
 # Operationeel Runbook
 
+Voor de initiële installatie en eerste ingebruikname zie eerst:
+
+- [installatiehandleiding](../installatie-handleiding.md)
+
 ## Gezondheidschecks
 
 - API: `GET /health`
