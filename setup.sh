@@ -46,8 +46,15 @@ fi
 echo "Start database en cache..."
 docker compose up -d postgres redis
 
+POSTGRES_CONTAINER_ID="$(docker compose ps -q postgres)"
+
+if [[ -z "$POSTGRES_CONTAINER_ID" ]]; then
+  echo "Kon de PostgreSQL container niet vinden na het opstarten."
+  exit 1
+fi
+
 echo "Wachten op PostgreSQL..."
-until docker compose exec -T postgres pg_isready -U "${POSTGRES_USER:-vehiclelinq}" -d "${POSTGRES_DB:-vehiclelinq}" >/dev/null 2>&1; do
+until [[ "$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}starting{{end}}' "$POSTGRES_CONTAINER_ID")" == "healthy" ]]; do
   sleep 2
 done
 
