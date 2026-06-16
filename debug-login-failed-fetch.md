@@ -18,21 +18,30 @@
 - Dit veroorzaakt bij een echte serverinstallatie een browserrequest naar de localhost van de clientmachine in plaats van naar de server.
 - Inspectie van `infra/caddy/Caddyfile` toont gebruik van `handle_path /api/*` en `handle_path /health*`.
 - `handle_path` stript het gematchte padprefix, waardoor `/api/v1/auth/login` richting de API als `/v1/auth/login` wordt doorgestuurd; dat past niet bij de gedefinieerde API-routes onder `/api/v1`.
+- Runtime-logs van de gebruiker tonen `caddy` fouten `dial tcp 172.18.0.6:5173: connect: connection refused` voor `/` en `/login`.
+- Runtime-logs tonen ook `dial tcp 172.18.0.4:3000: connect: connection refused` voor `/health`, terwijl `api` tegelijk rapporteert dat Nest succesvol gestart is.
+- `docker compose ps` toont dat `caddy` ouder is dan de nieuw aangemaakte `web` en `api` containers; dit past bij een stale upstream-DNS/IP situatie in de reverse proxy.
+- `web` logs tonen daarnaast een niet-fatale Vite/CSS fout: `@import must precede all other statements`.
 
 ## Analyse
 
 - Hypothese 1 bevestigd: de frontend gebruikt een ongeschikte absolute localhost-URL als default.
 - Hypothese 2 bevestigd: Caddy proxystripping verbreekt de API-paden.
 - Hypothese 3 nog niet nodig om te bevestigen voor root cause; zelfs met draaiende API zou login via de huidige routing/config mislukken.
+- Hypothese 3 deels verworpen als primaire oorzaak: de API draait, maar `caddy` bereikt een verouderd upstream IP.
 - Hypothese 4 niet primair: het symptoom kan volledig verklaard worden door foutieve target URL en proxyconfiguratie.
 - Hypothese 5 bevestigd: de loginrequest faalt op netwerkniveau door een onjuiste absolute URL in combinatie met een fout proxy-pad.
+- Extra runtime root cause bevestigd: na het opnieuw opbouwen van `web` en `api` blijft `caddy` oude container-IP's gebruiken totdat de proxy zelf herstart wordt.
 
 ## Fix
 
 - `apps/web/src/lib/api.ts`: default API-base aangepast naar relatieve `/api/v1`.
 - `.env.example`: `VITE_API_BASE_URL` aangepast naar `/api/v1`.
 - `infra/caddy/Caddyfile`: `handle_path` vervangen door `handle` voor `/api/*` en `/health*`, zodat de originele paden behouden blijven.
+- `setup.sh`: start `api`, `ingest` en `web` eerst, en force-recreate daarna `caddy` zodat upstream IP-adressen opnieuw worden opgelost.
+- `apps/web/src/index.css`: Google Fonts `@import` naar boven verplaatst zodat Vite geen CSS parserfout meer geeft.
 
 ## Verificatie
 
-- Nog niet gestart.
+- Lokale syntax/diagnostics controle nog uit te voeren.
+- Gebruiker moet na deploy `caddy` opnieuw laten recreeren en loginflow opnieuw testen.

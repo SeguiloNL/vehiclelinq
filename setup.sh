@@ -63,8 +63,11 @@ docker compose exec -T postgres psql -U "${POSTGRES_USER:-vehiclelinq}" -d "${PO
 docker compose exec -T postgres psql -U "${POSTGRES_USER:-vehiclelinq}" -d "${POSTGRES_DB:-vehiclelinq}" -f /dev/stdin < apps/api/src/database/migrations/002_timeseries.sql
 docker compose exec -T postgres psql -U "${POSTGRES_USER:-vehiclelinq}" -d "${POSTGRES_DB:-vehiclelinq}" -f /dev/stdin < apps/api/src/database/migrations/003_retention_jobs.sql
 
-echo "Applicatiestack bouwen en starten..."
-docker compose up -d --build api ingest web caddy
+echo "Applicaties bouwen en starten..."
+docker compose up -d --build api ingest web
+
+echo "Reverse proxy opnieuw opbouwen zodat upstream IP-adressen ververst worden..."
+docker compose up -d --force-recreate caddy
 
 cat <<EOF
 
