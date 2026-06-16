@@ -71,7 +71,7 @@ CREATE TABLE vehicle_last_state (
 );
 
 CREATE TABLE telemetry_positions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID NOT NULL DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   vehicle_id UUID NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
   tracker_id UUID REFERENCES trackers(id) ON DELETE SET NULL,
@@ -82,7 +82,8 @@ CREATE TABLE telemetry_positions (
   heading DOUBLE PRECISION NOT NULL DEFAULT 0,
   ignition BOOLEAN NOT NULL DEFAULT FALSE,
   recorded_at TIMESTAMPTZ NOT NULL,
-  received_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  received_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (id, recorded_at)
 );
 
 CREATE TABLE trip_summaries (
