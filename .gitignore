@@ -1,0 +1,15 @@
+.DS_Store
+node_modules
+dist
+coverage
+.env
+.env.local
+.pnpm-store
+.vite
+apps/web/node_modules
+apps/api/node_modules
+apps/ingest/node_modules
+packages/shared/node_modules
+infra/caddy/data
+infra/caddy/config
+postgres-data

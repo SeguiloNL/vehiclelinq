@@ -1,0 +1,16 @@
+{
+  "name": "vehiclelinq",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Self-hosted multi-company voertuigvolgsysteem met Teltonika-integratie.",
+  "packageManager": "pnpm@10.12.1",
+  "scripts": {
+    "dev:web": "pnpm --filter web dev --host 0.0.0.0",
+    "dev:api": "pnpm --filter @vehiclelinq/api dev",
+    "dev:ingest": "pnpm --filter @vehiclelinq/ingest dev",
+    "build": "pnpm -r build",
+    "check": "pnpm -r check",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint"
+  }
+}
