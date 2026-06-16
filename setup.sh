@@ -10,11 +10,28 @@ if [[ ! -f ".env" ]]; then
   echo ".env aangemaakt vanuit .env.example"
 fi
 
-# Laad .env zodat shell-commando's dezelfde waarden gebruiken als Docker Compose.
-set -a
-# shellcheck disable=SC1091
-source .env
-set +a
+get_env_value() {
+  local key="$1"
+  local value
+
+  value="$(grep -E "^${key}=" .env | head -n 1 | cut -d '=' -f2- || true)"
+  value="${value%\"}"
+  value="${value#\"}"
+  value="${value%\'}"
+  value="${value#\'}"
+
+  printf '%s' "$value"
+}
+
+POSTGRES_DB="${POSTGRES_DB:-$(get_env_value POSTGRES_DB)}"
+POSTGRES_USER="${POSTGRES_USER:-$(get_env_value POSTGRES_USER)}"
+POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-$(get_env_value POSTGRES_PASSWORD)}"
+API_PORT="${API_PORT:-$(get_env_value API_PORT)}"
+INGEST_HEALTH_PORT="${INGEST_HEALTH_PORT:-$(get_env_value INGEST_HEALTH_PORT)}"
+TELTONIKA_TCP_PORT="${TELTONIKA_TCP_PORT:-$(get_env_value TELTONIKA_TCP_PORT)}"
+TELTONIKA_UDP_PORT="${TELTONIKA_UDP_PORT:-$(get_env_value TELTONIKA_UDP_PORT)}"
+BOOTSTRAP_SUPERADMIN_EMAIL="${BOOTSTRAP_SUPERADMIN_EMAIL:-$(get_env_value BOOTSTRAP_SUPERADMIN_EMAIL)}"
+BOOTSTRAP_SUPERADMIN_PASSWORD="${BOOTSTRAP_SUPERADMIN_PASSWORD:-$(get_env_value BOOTSTRAP_SUPERADMIN_PASSWORD)}"
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "Docker is niet geinstalleerd. Installeer Docker Engine en Docker Compose plugin eerst."
