@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Headers,
+  Inject,
   Post,
   UnauthorizedException,
   UseGuards,
@@ -15,7 +16,7 @@ import { AuthService } from './auth.service';
 
 @Controller('api/v1')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(@Inject(AuthService) private readonly authService: AuthService) {}
 
   @Post('auth/login')
   login(@Body() body: LoginRequest): Promise<AuthResponse> {

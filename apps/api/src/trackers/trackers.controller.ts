@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, UseGuards } from '@nestjs/common';
 import type { Tracker } from '@vehiclelinq/shared';
 import type { AuthUser } from '../auth/auth.types';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -9,7 +9,7 @@ import { TrackersService } from './trackers.service';
 @Controller('api/v1')
 @UseGuards(AuthGuard, RolesGuard)
 export class TrackersController {
-  constructor(private readonly trackersService: TrackersService) {}
+  constructor(@Inject(TrackersService) private readonly trackersService: TrackersService) {}
 
   @Get('companies/:companyId/trackers')
   list(

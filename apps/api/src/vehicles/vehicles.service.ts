@@ -1,11 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import type { DashboardResponse, Vehicle, VehicleLiveState } from '@vehiclelinq/shared';
 import type { AuthUser } from '../auth/auth.types';
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class VehiclesService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(@Inject(DatabaseService) private readonly database: DatabaseService) {}
 
   async dashboard(user: AuthUser, companyId: string): Promise<DashboardResponse> {
     this.assertAccess(user, companyId);

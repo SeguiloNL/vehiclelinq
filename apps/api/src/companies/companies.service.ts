@@ -1,11 +1,11 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type { Company } from '@vehiclelinq/shared';
 import type { AuthUser } from '../auth/auth.types';
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class CompaniesService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(@Inject(DatabaseService) private readonly database: DatabaseService) {}
 
   async list(user: AuthUser): Promise<Company[]> {
     if (user.role === 'superadmin') {

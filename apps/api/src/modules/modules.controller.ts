@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Patch, UseGuards } from '@nestjs/common';
 import type { CompanyModuleState, ModuleDefinition, ModuleKey } from '@vehiclelinq/shared';
 import type { AuthUser } from '../auth/auth.types';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -9,7 +9,7 @@ import { ModulesService } from './modules.service';
 @Controller('api/v1')
 @UseGuards(AuthGuard, RolesGuard)
 export class ModulesController {
-  constructor(private readonly modulesService: ModulesService) {}
+  constructor(@Inject(ModulesService) private readonly modulesService: ModulesService) {}
 
   @Get('platform/modules')
   listCatalog(): ModuleDefinition[] {

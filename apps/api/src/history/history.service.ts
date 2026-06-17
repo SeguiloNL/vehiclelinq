@@ -1,11 +1,11 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type { HistoryPoint, VehicleHistoryResponse } from '@vehiclelinq/shared';
 import type { AuthUser } from '../auth/auth.types';
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class HistoryService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(@Inject(DatabaseService) private readonly database: DatabaseService) {}
 
   async getVehicleHistory(
     user: AuthUser,

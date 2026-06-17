@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import type { CompanyModuleState, ModuleDefinition, ModuleKey } from '@vehiclelinq/shared';
 import type { AuthUser } from '../auth/auth.types';
 import { DatabaseService } from '../database/database.service';
@@ -6,7 +6,7 @@ import { moduleRegistry } from './module-registry';
 
 @Injectable()
 export class ModulesService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(@Inject(DatabaseService) private readonly database: DatabaseService) {}
 
   listCatalog(): ModuleDefinition[] {
     return moduleRegistry;

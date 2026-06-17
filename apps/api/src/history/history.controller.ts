@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Param, Query, UseGuards } from '@nestjs/common';
 import type { VehicleHistoryResponse } from '@vehiclelinq/shared';
 import type { AuthUser } from '../auth/auth.types';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -9,7 +9,7 @@ import { HistoryService } from './history.service';
 @Controller('api/v1')
 @UseGuards(AuthGuard, RolesGuard)
 export class HistoryController {
-  constructor(private readonly historyService: HistoryService) {}
+  constructor(@Inject(HistoryService) private readonly historyService: HistoryService) {}
 
   @Get('companies/:companyId/vehicles/:vehicleId/history')
   getVehicleHistory(

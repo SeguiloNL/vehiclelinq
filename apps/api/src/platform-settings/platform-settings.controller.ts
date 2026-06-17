@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Patch, UseGuards } from '@nestjs/common';
 import type { AuthUser } from '../auth/auth.types';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { AuthGuard } from '../common/guards/auth.guard';
@@ -11,7 +11,10 @@ import {
 @Controller('api/v1/platform/settings')
 @UseGuards(AuthGuard, RolesGuard)
 export class PlatformSettingsController {
-  constructor(private readonly settingsService: PlatformSettingsService) {}
+  constructor(
+    @Inject(PlatformSettingsService)
+    private readonly settingsService: PlatformSettingsService,
+  ) {}
 
   @Get()
   get(@CurrentUser() user: AuthUser): Promise<PlatformSettingsView> {

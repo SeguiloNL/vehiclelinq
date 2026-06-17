@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import type { AuthUser } from '../auth/auth.types';
 import { DatabaseService } from '../database/database.service';
 
@@ -13,7 +13,7 @@ export interface PlatformSettingsView {
 
 @Injectable()
 export class PlatformSettingsService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(@Inject(DatabaseService) private readonly database: DatabaseService) {}
 
   async get(user: AuthUser): Promise<PlatformSettingsView> {
     if (user.role !== 'superadmin') {

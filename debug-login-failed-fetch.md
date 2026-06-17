@@ -25,6 +25,8 @@
 - `web` logs tonen daarnaast een niet-fatale Vite/CSS fout: `@import must precede all other statements`.
 - Gebruiker meldt nu een echte API-response: `{"statusCode":500,"message":"Internal server error"}`.
 - Statische inspectie van `apps/api/src/auth/auth.service.ts` toont dat een `500` alleen plausibel is bij een onverwachte fout in de query, bcrypt-compare of JWT-creatie; ongeldige credentials zouden `401` moeten geven.
+- Verse API-logs tonen nu de exacte fout: `TypeError: Cannot read properties of undefined (reading 'login')` in `AuthController.login`.
+- De stacktrace wijst naar `this.authService.login(body)`; dus `this.authService` is `undefined` in runtime.
 
 ## Analyse
 
@@ -36,7 +38,8 @@
 - Hypothese 5 bevestigd: de loginrequest faalt op netwerkniveau door een onjuiste absolute URL in combinatie met een fout proxy-pad.
 - Extra runtime root cause bevestigd: na het opnieuw opbouwen van `web` en `api` blijft `caddy` oude container-IP's gebruiken totdat de proxy zelf herstart wordt.
 - Nieuwe vervolganalyse: de netwerkfout is grotendeels opgelost; de resterende fout zit binnen de API-loginflow.
-- Hypothese 6 is nu actief en vereist runtime-evidence uit API-logs.
+- Hypothese 6 bevestigd: het probleem zit niet in credentials of JWT, maar in dependency injection van Nest bij runtime.
+- Waarschijnlijke onderliggende oorzaak: constructor type metadata wordt in deze runtime/transpile setup niet betrouwbaar gebruikt, waardoor Nest classes zonder ingevulde dependency construeert.
 
 ## Fix
 
@@ -46,9 +49,11 @@
 - `setup.sh`: start `api`, `ingest` en `web` eerst, en force-recreate daarna `caddy` zodat upstream IP-adressen opnieuw worden opgelost.
 - `apps/web/src/index.css`: Google Fonts `@import` naar boven verplaatst zodat Vite geen CSS parserfout meer geeft.
 - `apps/api/src/auth/auth.service.ts`: gerichte diagnostische logging toegevoegd rond login-attempt, user lookup, password mismatch en onverwachte exceptions.
+- API controllers, services en `AuthGuard`: constructor injectie expliciet gemaakt met `@Inject(...)` zodat DI niet afhankelijk is van runtime metadata.
 
 ## Verificatie
 
 - Lokale syntax/diagnostics controle nog uit te voeren.
 - Lokale TypeScript-check voor de API slaagt.
-- Gebruiker moet de API opnieuw deployen, opnieuw inloggen en daarna de verse `api` logs delen om de exacte `500`-oorzaak vast te leggen.
+- De exacte `500`-oorzaak is vastgelegd in de API-logs.
+- Gebruiker moet de API opnieuw deployen en de loginflow opnieuw testen.

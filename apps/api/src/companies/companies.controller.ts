@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
 import type { Company } from '@vehiclelinq/shared';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -10,7 +10,7 @@ import { CompaniesService } from './companies.service';
 @Controller('api/v1/platform/companies')
 @UseGuards(AuthGuard, RolesGuard)
 export class CompaniesController {
-  constructor(private readonly companiesService: CompaniesService) {}
+  constructor(@Inject(CompaniesService) private readonly companiesService: CompaniesService) {}
 
   @Get()
   list(@CurrentUser() user: AuthUser): Promise<Company[]> {

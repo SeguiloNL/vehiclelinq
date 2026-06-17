@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { compare } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import type { AuthResponse, LoginRequest } from '@vehiclelinq/shared';
@@ -10,7 +10,7 @@ import type { AuthTokenPayload, AuthUser } from './auth.types';
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  constructor(private readonly database: DatabaseService) {}
+  constructor(@Inject(DatabaseService) private readonly database: DatabaseService) {}
 
   async login(body: LoginRequest): Promise<AuthResponse> {
     try {
