@@ -30,8 +30,21 @@ async function request<T>(
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || 'API request mislukt');
+    const raw = await response.text();
+    let message = raw || 'API request mislukt';
+
+    try {
+      const parsed = JSON.parse(raw) as { message?: string | string[] };
+      if (Array.isArray(parsed.message)) {
+        message = parsed.message.join(', ');
+      } else if (parsed.message) {
+        message = parsed.message;
+      }
+    } catch {
+      // Gebruik de tekstresponse als deze geen JSON is.
+    }
+
+    throw new Error(message);
   }
 
   return response.json() as Promise<T>;
@@ -72,6 +85,21 @@ export const api = {
     ),
   users: (accessToken: string, companyId: string) =>
     request<UserAccount[]>(`/companies/${companyId}/users`, {}, accessToken),
+  createUser: (
+    accessToken: string,
+    companyId: string,
+    body: {
+      displayName: string;
+      email: string;
+      password: string;
+      role: UserAccount['role'];
+    },
+  ) =>
+    request<UserAccount>(
+      `/companies/${companyId}/users`,
+      { method: 'POST', body: JSON.stringify(body) },
+      accessToken,
+    ),
   vehicleHistory: (
     accessToken: string,
     companyId: string,
