@@ -5,7 +5,6 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { TokenExpiredError } from 'jsonwebtoken';
 import { AuthService } from '../../auth/auth.service';
 
 @Injectable()
@@ -24,7 +23,7 @@ export class AuthGuard implements CanActivate {
     try {
       request.user = this.authService.verifyAccessToken(token);
     } catch (error) {
-      if (error instanceof TokenExpiredError) {
+      if ((error as { name?: string }).name === 'TokenExpiredError') {
         throw new UnauthorizedException('Sessie verlopen. Log opnieuw in.');
       }
 
