@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, RadioTower, Route as RouteIcon } from 'lucide-react';
-import vehiclelinqLogo from '@/assets/vehiclelinq-logo.svg';
+import vehiclelinqLogo from '@/assets/vehiclelinq-logo.png';
 import { api } from '@/lib/api';
 import { useSessionStore } from '@/store/session';
 
@@ -37,7 +37,7 @@ export function LoginPage() {
             <img
               src={vehiclelinqLogo}
               alt="VehicleLinQ"
-              className="h-14 w-auto max-w-[320px] object-contain"
+              className="h-auto w-full max-w-[460px] object-contain"
             />
             <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-white lg:text-5xl">
               Een centrale adminomgeving voor fleet visibility, historie en tenantbeheer.

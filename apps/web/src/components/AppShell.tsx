@@ -14,7 +14,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import vehiclelinqLogo from '@/assets/vehiclelinq-logo.svg';
+import vehiclelinqLogo from '@/assets/vehiclelinq-logo.png';
 import { CompanySelector } from '@/components/CompanySelector';
 import { usePlatformContext } from '@/hooks/usePlatformContext';
 import { useSessionStore } from '@/store/session';
@@ -67,7 +67,7 @@ export function AppShell() {
               <img
                 src={vehiclelinqLogo}
                 alt="VehicleLinQ"
-                className="h-12 w-auto max-w-[180px] object-contain"
+                className="h-auto w-full max-w-[220px] object-contain"
               />
             </Link>
             <button
@@ -78,9 +78,7 @@ export function AppShell() {
               <X className="h-5 w-5" />
             </button>
           </div>
-          <p className="mt-3 text-sm text-slate-400">Connecting your fleet</p>
-
-          <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-800/80 p-4">
+          <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-800/80 p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
               Ingelogd als
             </p>

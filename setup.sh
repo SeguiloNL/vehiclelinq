@@ -62,6 +62,7 @@ echo "Database migraties uitvoeren..."
 docker compose exec -T postgres psql -U "${POSTGRES_USER:-vehiclelinq}" -d "${POSTGRES_DB:-vehiclelinq}" -f /dev/stdin < apps/api/src/database/migrations/001_initial.sql
 docker compose exec -T postgres psql -U "${POSTGRES_USER:-vehiclelinq}" -d "${POSTGRES_DB:-vehiclelinq}" -f /dev/stdin < apps/api/src/database/migrations/002_timeseries.sql
 docker compose exec -T postgres psql -U "${POSTGRES_USER:-vehiclelinq}" -d "${POSTGRES_DB:-vehiclelinq}" -f /dev/stdin < apps/api/src/database/migrations/003_retention_jobs.sql
+docker compose exec -T postgres psql -U "${POSTGRES_USER:-vehiclelinq}" -d "${POSTGRES_DB:-vehiclelinq}" -f /dev/stdin < apps/api/src/database/migrations/004_trip_management.sql
 
 echo "Applicaties bouwen en starten..."
 docker compose up -d --build api ingest web

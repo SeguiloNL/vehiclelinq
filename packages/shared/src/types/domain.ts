@@ -15,6 +15,7 @@ export interface UserAccount {
   displayName: string;
   role: PlatformRole;
   companyId: string | null;
+  defaultVehicleId?: string | null;
 }
 
 export interface Vehicle {
@@ -57,6 +58,50 @@ export interface HistoryPoint {
   heading: number;
   recordedAt: string;
   ignition: boolean;
+}
+
+export type TripClassification = 'business' | 'private' | 'commute' | 'unknown';
+export type TripStatus = 'draft' | 'reviewed' | 'approved';
+export type TripSource = 'automatic' | 'manual_adjustment';
+
+export interface TripSummary {
+  id: string;
+  companyId: string;
+  vehicleId: string;
+  driverUserId: string | null;
+  startedAt: string;
+  endedAt: string;
+  startLat: number | null;
+  startLng: number | null;
+  endLat: number | null;
+  endLng: number | null;
+  distanceKm: number;
+  durationSeconds: number;
+  classification: TripClassification;
+  status: TripStatus;
+  comment: string | null;
+  source: TripSource;
+  reviewedBy: string | null;
+  reviewedAt: string | null;
+  vehicleName?: string;
+  plateNumber?: string;
+  driverName?: string | null;
+}
+
+export interface TripDaySummary {
+  id: string;
+  companyId: string;
+  vehicleId: string | null;
+  driverUserId: string | null;
+  summaryDate: string;
+  totalDistanceKm: number;
+  businessDistanceKm: number;
+  privateDistanceKm: number;
+  commuteDistanceKm: number;
+  tripCount: number;
+  openTripCount: number;
+  vehicleName?: string | null;
+  driverName?: string | null;
 }
 
 export interface CompanyModuleState {

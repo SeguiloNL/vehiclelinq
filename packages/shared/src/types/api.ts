@@ -2,6 +2,8 @@ import type {
   Company,
   CompanyModuleState,
   HistoryPoint,
+  TripDaySummary,
+  TripSummary,
   Tracker,
   UserAccount,
   Vehicle,
@@ -30,4 +32,15 @@ export interface DashboardResponse {
 export interface VehicleHistoryResponse {
   vehicle: Vehicle;
   points: HistoryPoint[];
+}
+
+export interface TripListResponse {
+  trips: TripSummary[];
+  days: TripDaySummary[];
+}
+
+export interface UpdateTripRequest {
+  classification: TripSummary['classification'];
+  comment?: string | null;
+  status?: TripSummary['status'];
 }
