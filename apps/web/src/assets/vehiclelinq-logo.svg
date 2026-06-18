@@ -1,0 +1,46 @@
+<svg width="720" height="180" viewBox="0 0 720 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="carBlue" x1="62" y1="56" x2="285" y2="147" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2CC2FF"/>
+      <stop offset="1" stop-color="#0C4FCB"/>
+    </linearGradient>
+    <linearGradient id="brandBlue" x1="243" y1="76" x2="478" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#178BFF"/>
+      <stop offset="1" stop-color="#0058C9"/>
+    </linearGradient>
+    <linearGradient id="brandGreen" x1="474" y1="76" x2="683" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A4E92F"/>
+      <stop offset="1" stop-color="#10A943"/>
+    </linearGradient>
+    <linearGradient id="pinGreen" x1="170" y1="18" x2="225" y2="85" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9EEC34"/>
+      <stop offset="1" stop-color="#0FA841"/>
+    </linearGradient>
+  </defs>
+  <path d="M52 114C71 95 108 81 154 78C206 74 252 84 290 106L261 128C224 119 188 115 152 116C114 116 81 120 58 129L52 114Z" fill="url(#carBlue)"/>
+  <path d="M77 95C104 81 138 74 181 74C209 74 237 80 267 92L281 105C251 97 223 94 195 94C151 94 113 101 81 116L77 95Z" fill="#0A55D3"/>
+  <path d="M42 117C62 110 88 105 120 103L136 118H86C65 118 49 121 39 126L42 117Z" fill="#083E9B"/>
+  <path d="M114 121L236 121C251 121 264 127 275 139H161C143 139 126 133 114 121Z" fill="#0A49B6"/>
+  <path d="M86 103C112 101 147 101 191 104C220 106 248 110 274 117" stroke="#5BD7FF" stroke-width="3" stroke-linecap="round"/>
+  <path d="M84 124C96 121 109 120 124 120C140 120 154 122 167 126" stroke="#2ABFFF" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="92" cy="132" r="15" fill="#0A4AB6"/>
+  <circle cx="92" cy="132" r="8" fill="#0D3376"/>
+  <circle cx="191" cy="132" r="15" fill="#0A4AB6"/>
+  <circle cx="191" cy="132" r="8" fill="#0D3376"/>
+  <path d="M174 13C195 13 212 30 212 51C212 78 174 109 174 109C174 109 136 78 136 51C136 30 153 13 174 13Z" fill="url(#pinGreen)"/>
+  <path d="M174 39V72M159 56V72M189 56V72M174 39C174 34 178 30 183 30C188 30 192 34 192 39C192 44 188 48 183 48C178 48 174 44 174 39ZM144 56C144 51 148 47 153 47C158 47 162 51 162 56C162 61 158 65 153 65C148 65 144 61 144 56ZM186 56C186 51 190 47 195 47C200 47 204 51 204 56C204 61 200 65 195 65C190 65 186 61 186 56Z" stroke="#F8FFF5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M76 46C88 39 102 36 119 37" stroke="#34C7FF" stroke-width="7" stroke-linecap="round"/>
+  <path d="M69 58C87 47 108 43 132 45" stroke="#34C7FF" stroke-width="7" stroke-linecap="round"/>
+  <path d="M64 71C87 57 113 52 143 54" stroke="#34C7FF" stroke-width="7" stroke-linecap="round"/>
+  <path d="M250 63H281.5L272.5 117H241L250 63Z" fill="url(#brandBlue)"/>
+  <path d="M287.5 63H318L328.5 111L354 63H384L337 145H308.5L287.5 63Z" fill="url(#brandBlue)"/>
+  <path d="M391 104C391 78 410 61 438 61C466 61 482 77 482 101C482 106 481 112 479 117H421C423 127 431 133 443 133C452 133 459 131 467 126L474 144C464 151 451 154 437 154C408 154 391 135 391 104ZM421 97H452C452 87 446 80 437 80C428 80 423 86 421 97Z" fill="url(#brandBlue)"/>
+  <path d="M490 63H520L509.5 145H479L490 63ZM495 39C495 29 503 21 514 21C525 21 532 28 532 38C532 49 524 56 513 56C502 56 495 49 495 39Z" fill="url(#brandBlue)"/>
+  <path d="M536 145L550 39H580L566 145H536Z" fill="url(#brandBlue)"/>
+  <path d="M584 104C584 79 603 61 632 61C646 61 658 66 665 77L643 92C640 85 634 82 627 82C614 82 605 91 605 103C605 115 613 124 626 124C633 124 639 121 644 114L662 129C653 145 638 154 620 154C597 154 584 134 584 104Z" fill="url(#brandBlue)"/>
+  <path d="M462 63H493L479 145H448L462 63Z" fill="url(#brandGreen)"/>
+  <path d="M497 104C497 79 516 61 544 61C572 61 588 77 588 101C588 106 587 112 585 117H527C529 127 537 133 549 133C558 133 565 131 573 126L580 144C570 151 557 154 543 154C514 154 497 135 497 104ZM527 97H558C558 87 552 80 543 80C534 80 529 86 527 97Z" fill="url(#brandGreen)"/>
+  <path d="M596 63H626L612 145H582L596 63ZM601 39C601 29 609 21 620 21C631 21 638 28 638 38C638 49 630 56 619 56C608 56 601 49 601 39Z" fill="url(#brandGreen)"/>
+  <path d="M635 104C635 79 654 61 681 61C709 61 724 81 724 106C724 131 705 154 676 154C651 154 635 135 635 104ZM694 104C694 92 686 82 674 82C661 82 655 92 655 103C655 116 663 124 675 124C687 124 694 115 694 104Z" fill="url(#brandGreen)"/>
+  <path d="M676 146L691 123L710 140L699 148L711 162L694 173L676 146Z" fill="url(#brandGreen)"/>
+</svg>

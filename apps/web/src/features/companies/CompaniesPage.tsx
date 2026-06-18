@@ -1,6 +1,7 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import type { Company } from '@vehiclelinq/shared';
 import { Plus } from 'lucide-react';
+import { PageHeader } from '@/components/PageHeader';
 import { api } from '@/lib/api';
 import { usePlatformContext } from '@/hooks/usePlatformContext';
 import { useSessionStore } from '@/store/session';
@@ -59,7 +60,7 @@ export function CompaniesPage() {
       setCurrentCompanyId(company.id);
       setName('');
       setSlug('');
-      setSuccessMessage(`Bedrijf "${company.name}" is aangemaakt en geactiveerd.`);
+      setSuccessMessage(`Bedrijf "${company.name}" is aangemaakt en geselecteerd.`);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Bedrijf aanmaken mislukt.');
     } finally {
@@ -68,47 +69,53 @@ export function CompaniesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <header>
-        <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">Platform</p>
-        <h1 className="mt-2 font-serif text-4xl text-white">Bedrijven beheren</h1>
-      </header>
+    <div className="page-shell">
+      <PageHeader
+        eyebrow="Platform"
+        title="Bedrijven beheren"
+        description="Beheer tenants, kies de actieve context en maak nieuwe bedrijven aan."
+      />
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_0.8fr]">
-        <div className="rounded-[32px] border border-white/10 bg-white/5 p-6">
-          <h2 className="text-lg font-semibold text-white">Tenant overzicht</h2>
+      <section className="grid gap-6 xl:grid-cols-[1fr_0.82fr]">
+        <div className="section-card">
+          <h2 className="text-lg font-semibold text-slate-900">Tenant overzicht</h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Selecteer welk bedrijf je in het dashboard en de beheerpagina&apos;s wilt openen.
+          </p>
           <div className="mt-4 space-y-3">
             {items.length === 0 ? (
-              <p className="rounded-3xl border border-dashed border-white/10 bg-slate-950/40 p-5 text-sm text-slate-400">
-                Er zijn nog geen bedrijven beschikbaar.
-              </p>
+              <p className="empty-state">Er zijn nog geen bedrijven beschikbaar.</p>
             ) : (
               items.map((company) => (
-                <article
-                  key={company.id}
-                  className="rounded-3xl border border-white/10 bg-slate-950/70 p-5"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <h3 className="text-lg text-white">{company.name}</h3>
-                      <p className="text-sm text-slate-400">{company.slug}</p>
+                <article key={company.id} className="table-like-row">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h3 className="text-lg font-semibold text-slate-900">{company.name}</h3>
+                      <span
+                        className={`status-badge ${
+                          company.isActive ? 'status-badge-success' : 'status-badge-warning'
+                        }`}
+                      >
+                        {company.isActive ? 'Beschikbaar' : 'Uitgeschakeld'}
+                      </span>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentCompanyId(company.id)}
-                      className="rounded-2xl border border-cyan-400/30 px-4 py-2 text-sm text-cyan-300 transition hover:bg-cyan-400/10"
-                    >
-                      {company.id === currentCompanyId ? 'Actief' : 'Activeren'}
-                    </button>
+                    <p className="mt-1 text-sm text-slate-500">{company.slug}</p>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentCompanyId(company.id)}
+                    className="btn-secondary px-4 py-2"
+                  >
+                    {company.id === currentCompanyId ? 'Geselecteerd' : 'Selecteren'}
+                  </button>
                 </article>
               ))
             )}
           </div>
         </div>
 
-        <div className="rounded-[32px] border border-white/10 bg-slate-950/70 p-6">
-          <h2 className="text-lg font-semibold text-white">Nieuw bedrijf</h2>
+        <div className="section-card">
+          <h2 className="text-lg font-semibold text-slate-900">Nieuw bedrijf</h2>
           <form className="mt-4 space-y-4" onSubmit={handleCreate}>
             <input
               value={name}
@@ -122,7 +129,7 @@ export function CompaniesPage() {
                 setSuccessMessage(null);
               }}
               placeholder="Bedrijfsnaam"
-              className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400"
+              className="form-control"
             />
             <input
               value={slug}
@@ -132,26 +139,14 @@ export function CompaniesPage() {
                 setSuccessMessage(null);
               }}
               placeholder="Slug"
-              className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400"
+              className="form-control"
             />
             <p className="text-xs text-slate-500">
-              Gebruik een korte slug zoals <span className="text-slate-300">demo-logistics</span>.
+              Gebruik een korte slug zoals <span className="font-semibold text-slate-700">demo-logistics</span>.
             </p>
-            {errorMessage ? (
-              <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
-                {errorMessage}
-              </p>
-            ) : null}
-            {successMessage ? (
-              <p className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
-                {successMessage}
-              </p>
-            ) : null}
-            <button
-              type="submit"
-              disabled={isCreating}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-cyan-400 px-4 py-3 font-semibold text-slate-950"
-            >
+            {errorMessage ? <p className="alert-error">{errorMessage}</p> : null}
+            {successMessage ? <p className="alert-success">{successMessage}</p> : null}
+            <button type="submit" disabled={isCreating} className="btn-primary w-full">
               <Plus className="h-4 w-4" />
               {isCreating ? 'Bedrijf wordt aangemaakt...' : 'Bedrijf toevoegen'}
             </button>

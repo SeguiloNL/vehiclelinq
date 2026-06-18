@@ -1,13 +1,13 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { PLATFORM_ROLES, type UserAccount } from '@vehiclelinq/shared';
 import { Plus } from 'lucide-react';
+import { PageHeader } from '@/components/PageHeader';
 import { api } from '@/lib/api';
-import { CompanySelector } from '@/components/CompanySelector';
 import { usePlatformContext } from '@/hooks/usePlatformContext';
 import { useSessionStore } from '@/store/session';
 
 export function UsersPage() {
-  const { accessToken, companies, currentCompanyId, setCurrentCompanyId } = usePlatformContext();
+  const { accessToken, currentCompanyId } = usePlatformContext();
   const currentUser = useSessionStore((state) => state.user);
   const [users, setUsers] = useState<UserAccount[]>([]);
   const [displayName, setDisplayName] = useState('');
@@ -107,22 +107,16 @@ export function UsersPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-        <div>
-          <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">Gebruikers</p>
-          <h1 className="mt-2 font-serif text-4xl text-white">Toegang en rollen</h1>
-        </div>
-        <CompanySelector
-          companies={companies}
-          value={currentCompanyId}
-          onChange={setCurrentCompanyId}
-        />
-      </header>
+    <div className="page-shell">
+      <PageHeader
+        eyebrow="Gebruikers"
+        title="Toegang en rollen"
+        description="Beheer gebruikers en wijs de juiste tenantrollen toe binnen de actieve context."
+      />
 
       <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-[32px] border border-white/10 bg-slate-950/70 p-6">
-          <h2 className="text-lg font-semibold text-white">Nieuwe gebruiker</h2>
+        <div className="section-card">
+          <h2 className="text-lg font-semibold text-slate-900">Nieuwe gebruiker</h2>
           <form className="mt-4 space-y-4" onSubmit={handleCreate}>
             <input
               value={displayName}
@@ -132,7 +126,7 @@ export function UsersPage() {
                 setSuccessMessage(null);
               }}
               placeholder="Volledige naam"
-              className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400"
+              className="form-control"
             />
             <input
               value={email}
@@ -142,7 +136,7 @@ export function UsersPage() {
                 setSuccessMessage(null);
               }}
               placeholder="E-mailadres"
-              className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400"
+              className="form-control"
             />
             <input
               type="password"
@@ -153,7 +147,7 @@ export function UsersPage() {
                 setSuccessMessage(null);
               }}
               placeholder="Tijdelijk wachtwoord"
-              className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400"
+              className="form-control"
             />
             <select
               value={role}
@@ -162,7 +156,7 @@ export function UsersPage() {
                 setErrorMessage(null);
                 setSuccessMessage(null);
               }}
-              className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400"
+              className="form-select"
             >
               {availableRoles.map((candidateRole) => (
                 <option key={candidateRole} value={candidateRole}>
@@ -170,21 +164,9 @@ export function UsersPage() {
                 </option>
               ))}
             </select>
-            {errorMessage ? (
-              <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
-                {errorMessage}
-              </p>
-            ) : null}
-            {successMessage ? (
-              <p className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
-                {successMessage}
-              </p>
-            ) : null}
-            <button
-              type="submit"
-              disabled={!currentCompanyId || isCreating}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-cyan-400 px-4 py-3 font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
-            >
+            {errorMessage ? <p className="alert-error">{errorMessage}</p> : null}
+            {successMessage ? <p className="alert-success">{successMessage}</p> : null}
+            <button type="submit" disabled={!currentCompanyId || isCreating} className="btn-primary w-full">
               <Plus className="h-4 w-4" />
               {isCreating ? 'Gebruiker wordt toegevoegd...' : 'Gebruiker toevoegen'}
             </button>
@@ -193,22 +175,22 @@ export function UsersPage() {
 
         <div className="space-y-3">
           {loading ? (
-            <p className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-5 text-sm text-slate-400">
+            <p className="empty-state">
               Gebruikers worden geladen...
             </p>
           ) : users.length === 0 ? (
-            <p className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-5 text-sm text-slate-400">
+            <p className="empty-state">
               Er zijn nog geen gebruikers voor dit bedrijf.
             </p>
           ) : (
             users.map((user) => (
-              <article key={user.id} className="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <article key={user.id} className="list-card">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <h2 className="text-lg font-semibold text-white">{user.displayName}</h2>
-                    <p className="text-sm text-slate-400">{user.email}</p>
+                    <h2 className="text-lg font-semibold text-slate-900">{user.displayName}</h2>
+                    <p className="text-sm text-slate-500">{user.email}</p>
                   </div>
-                  <span className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
+                  <span className="status-badge status-badge-neutral">
                     {user.role}
                   </span>
                 </div>

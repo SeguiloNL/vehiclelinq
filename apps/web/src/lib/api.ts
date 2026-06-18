@@ -46,10 +46,6 @@ async function request<T>(
   const session = useSessionStore.getState();
   const resolvedAccessToken = accessToken ?? session.accessToken;
   const resolvedRefreshToken = refreshToken ?? session.refreshToken;
-
-  // #region debug-point D:company-create-request
-  if (path === '/platform/companies' && options.method === 'POST') fetch('http://127.0.0.1:7777/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'company-create-500',runId:'pre-fix',hypothesisId:'D',location:'apps/web/src/lib/api.ts:45',msg:'[DEBUG] Company create request started',data:{path,method:options.method,hasAccessToken:Boolean(resolvedAccessToken),body:typeof options.body === 'string' ? options.body : null},ts:Date.now()})}).catch(()=>{});
-  // #endregion
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers: {
@@ -86,9 +82,6 @@ async function request<T>(
 
   if (!response.ok) {
     const raw = await response.text();
-    // #region debug-point D:company-create-response-error
-    if (path === '/platform/companies' && options.method === 'POST') fetch('http://127.0.0.1:7777/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'company-create-500',runId:'pre-fix',hypothesisId:'D',location:'apps/web/src/lib/api.ts:76',msg:'[DEBUG] Company create request failed',data:{status:response.status,statusText:response.statusText,raw},ts:Date.now()})}).catch(()=>{});
-    // #endregion
     let message = raw || 'API request mislukt';
 
     try {
@@ -109,10 +102,6 @@ async function request<T>(
 
     throw new Error(message);
   }
-
-  // #region debug-point D:company-create-response-success
-  if (path === '/platform/companies' && options.method === 'POST') fetch('http://127.0.0.1:7777/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'company-create-500',runId:'pre-fix',hypothesisId:'D',location:'apps/web/src/lib/api.ts:103',msg:'[DEBUG] Company create request succeeded',data:{status:response.status},ts:Date.now()})}).catch(()=>{});
-  // #endregion
   return response.json() as Promise<T>;
 }
 

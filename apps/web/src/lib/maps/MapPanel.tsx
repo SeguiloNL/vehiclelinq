@@ -128,5 +128,5 @@ export function MapPanel({
     };
   }, [historyPoints]);
 
-  return <div ref={containerRef} className="h-full min-h-[420px] w-full rounded-3xl" />;
+  return <div ref={containerRef} className="h-full min-h-[420px] w-full rounded-xl" />;
 }

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import type { Vehicle, VehicleHistoryResponse } from '@vehiclelinq/shared';
+import { PageHeader } from '@/components/PageHeader';
 import { api } from '@/lib/api';
-import { CompanySelector } from '@/components/CompanySelector';
 import { usePlatformContext } from '@/hooks/usePlatformContext';
 import { MapPanel } from '@/lib/maps/MapPanel';
 
 export function HistoryPage() {
-  const { accessToken, companies, currentCompanyId, setCurrentCompanyId } = usePlatformContext();
+  const { accessToken, currentCompanyId } = usePlatformContext();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('');
   const [history, setHistory] = useState<VehicleHistoryResponse | null>(null);
@@ -35,30 +35,24 @@ export function HistoryPage() {
   }, [accessToken, currentCompanyId, selectedVehicleId]);
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-        <div>
-          <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">Historie</p>
-          <h1 className="mt-2 font-serif text-4xl text-white">Routes en replay</h1>
-        </div>
-        <CompanySelector
-          companies={companies}
-          value={currentCompanyId}
-          onChange={setCurrentCompanyId}
-        />
-      </header>
+    <div className="page-shell">
+      <PageHeader
+        eyebrow="Historie"
+        title="Routes en replay"
+        description="Bekijk recente routepunten en replay-gegevens voor voertuigen uit de actieve tenant."
+      />
 
-      <div className="grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
-        <div className="rounded-[32px] border border-white/10 bg-white/5 p-5">
-          <label className="block text-sm text-slate-400">
+      <div className="grid gap-4 md:grid-cols-[0.82fr_1.18fr]">
+        <div className="section-card">
+          <label className="block text-sm font-medium text-slate-600">
             Voertuig
             <select
               value={selectedVehicleId}
               onChange={(event) => setSelectedVehicleId(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-white outline-none"
+              className="form-select mt-2"
             >
               {vehicles.map((vehicle) => (
-                <option key={vehicle.id} value={vehicle.id} className="bg-slate-950">
+                <option key={vehicle.id} value={vehicle.id}>
                   {vehicle.name}
                 </option>
               ))}
@@ -66,18 +60,24 @@ export function HistoryPage() {
           </label>
 
           <div className="mt-6 space-y-3">
-            {history?.points.map((point) => (
-              <article key={point.id} className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
-                <p className="text-sm text-white">{new Date(point.recordedAt).toLocaleString()}</p>
-                <p className="text-xs text-slate-400">
-                  {point.lat.toFixed(5)}, {point.lng.toFixed(5)} · {point.speedKph} km/u
-                </p>
-              </article>
-            ))}
+            {history?.points.length ? (
+              history.points.map((point) => (
+                <article key={point.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-sm font-medium text-slate-900">
+                    {new Date(point.recordedAt).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {point.lat.toFixed(5)}, {point.lng.toFixed(5)} · {point.speedKph} km/u
+                  </p>
+                </article>
+              ))
+            ) : (
+              <p className="empty-state">Er zijn nog geen routepunten beschikbaar voor dit voertuig.</p>
+            )}
           </div>
         </div>
 
-        <div className="rounded-[32px] border border-white/10 bg-slate-950/70 p-4">
+        <div className="section-card p-4">
           <MapPanel
             tileUrl="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution="&copy; OpenStreetMap contributors"

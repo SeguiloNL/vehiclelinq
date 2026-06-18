@@ -8,6 +8,16 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://api:3000',
+        changeOrigin: true,
+      },
+      '/health': {
+        target: 'http://api:3000',
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     sourcemap: 'hidden',

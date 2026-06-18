@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
+import { PageHeader } from '@/components/PageHeader';
 import { api } from '@/lib/api';
 import { useSessionStore } from '@/store/session';
 import type { PlatformSettingsView } from './types';
@@ -26,69 +27,68 @@ export function SettingsPage() {
   }
 
   if (!settings) {
-    return <div className="text-slate-400">Instellingen laden...</div>;
+    return <div className="text-slate-500">Instellingen laden...</div>;
   }
 
   return (
-    <div className="space-y-6">
-      <header>
-        <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">Instellingen</p>
-        <h1 className="mt-2 font-serif text-4xl text-white">Platformconfiguratie</h1>
-      </header>
+    <div className="page-shell">
+      <PageHeader
+        eyebrow="Instellingen"
+        title="Platformconfiguratie"
+        description="Pas kaart- en retentie-instellingen aan voor het platform."
+      />
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="text-sm text-slate-400">
-          Tile URL
-          <input
-            value={settings.mapTileUrl}
-            onChange={(event) =>
-              setSettings((current) =>
-                current ? { ...current, mapTileUrl: event.target.value } : current,
-              )
-            }
-            className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-white"
-          />
-        </label>
-        <label className="text-sm text-slate-400">
-          Attributie
-          <input
-            value={settings.mapAttribution}
-            onChange={(event) =>
-              setSettings((current) =>
-                current ? { ...current, mapAttribution: event.target.value } : current,
-              )
-            }
-            className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-white"
-          />
-        </label>
-        <label className="text-sm text-slate-400">
-          Retentie in maanden
-          <input
-            type="number"
-            value={settings.telemetryRetentionMonths}
-            onChange={(event) =>
-              setSettings((current) =>
-                current
-                  ? {
-                      ...current,
-                      telemetryRetentionMonths: Number(event.target.value),
-                    }
-                  : current,
-              )
-            }
-            className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-white"
-          />
-        </label>
+      <div className="section-card">
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="text-sm font-medium text-slate-600">
+            Tile URL
+            <input
+              value={settings.mapTileUrl}
+              onChange={(event) =>
+                setSettings((current) =>
+                  current ? { ...current, mapTileUrl: event.target.value } : current,
+                )
+              }
+              className="form-control mt-2"
+            />
+          </label>
+          <label className="text-sm font-medium text-slate-600">
+            Attributie
+            <input
+              value={settings.mapAttribution}
+              onChange={(event) =>
+                setSettings((current) =>
+                  current ? { ...current, mapAttribution: event.target.value } : current,
+                )
+              }
+              className="form-control mt-2"
+            />
+          </label>
+          <label className="text-sm font-medium text-slate-600">
+            Retentie in maanden
+            <input
+              type="number"
+              value={settings.telemetryRetentionMonths}
+              onChange={(event) =>
+                setSettings((current) =>
+                  current
+                    ? {
+                        ...current,
+                        telemetryRetentionMonths: Number(event.target.value),
+                      }
+                    : current,
+                )
+              }
+              className="form-control mt-2"
+            />
+          </label>
+        </div>
+
+        <button type="button" onClick={handleSave} className="btn-primary mt-6">
+          <Save className="h-4 w-4" />
+          Instellingen opslaan
+        </button>
       </div>
-
-      <button
-        type="button"
-        onClick={handleSave}
-        className="flex items-center gap-2 rounded-2xl bg-cyan-400 px-5 py-3 font-semibold text-slate-950"
-      >
-        <Save className="h-4 w-4" />
-        Instellingen opslaan
-      </button>
     </div>
   );
 }
