@@ -1,44 +1,53 @@
-import { defineConfig } from 'vite'
+import { fileURLToPath } from 'node:url'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tsconfigPaths from "vite-tsconfig-paths";
 import { traeBadgePlugin } from 'vite-plugin-trae-solo-badge';
 
 // https://vite.dev/config/
-export default defineConfig({
-  server: {
-    host: '0.0.0.0',
-    port: 5173,
-    proxy: {
-      '/api': {
-        target: 'http://api:3000',
-        changeOrigin: true,
-      },
-      '/health': {
-        target: 'http://api:3000',
-        changeOrigin: true,
+const workspaceRoot = fileURLToPath(new URL('../..', import.meta.url));
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, workspaceRoot, '');
+  const apiProxyTarget = env.API_BASE_URL || 'http://localhost:3000';
+
+  return {
+    envDir: workspaceRoot,
+    server: {
+      host: '0.0.0.0',
+      port: 5173,
+      proxy: {
+        '/api': {
+          target: apiProxyTarget,
+          changeOrigin: true,
+        },
+        '/health': {
+          target: apiProxyTarget,
+          changeOrigin: true,
+        },
       },
     },
-  },
-  build: {
-    sourcemap: 'hidden',
-  },
-  plugins: [
-    react({
-      babel: {
-        plugins: [
-          'react-dev-locator',
-        ],
-      },
-    }),
-    traeBadgePlugin({
-      variant: 'dark',
-      position: 'bottom-right',
-      prodOnly: true,
-      clickable: true,
-      clickUrl: 'https://www.trae.ai/solo?showJoin=1',
-      autoTheme: true,
-      autoThemeTarget: '#root'
-    }), 
-    tsconfigPaths()
-  ],
+    build: {
+      sourcemap: 'hidden',
+    },
+    plugins: [
+      react({
+        babel: {
+          plugins: [
+            'react-dev-locator',
+          ],
+        },
+      }),
+      traeBadgePlugin({
+        variant: 'dark',
+        position: 'bottom-right',
+        prodOnly: true,
+        clickable: true,
+        clickUrl: 'https://www.trae.ai/solo?showJoin=1',
+        autoTheme: true,
+        autoThemeTarget: '#root'
+      }), 
+      tsconfigPaths()
+    ],
+  };
 })
