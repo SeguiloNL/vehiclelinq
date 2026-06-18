@@ -10,32 +10,84 @@ import type {
   VehicleHistoryResponse,
 } from '@vehiclelinq/shared';
 import type { PlatformSettingsView } from '@/features/settings/types';
+import { useSessionStore } from '@/store/session';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
+
+function syncRefreshedSession(session: AuthResponse) {
+  const persistedCompanyId = localStorage.getItem('vehiclelinq.companyId');
+
+  localStorage.setItem('vehiclelinq.accessToken', session.accessToken);
+  localStorage.setItem('vehiclelinq.refreshToken', session.refreshToken);
+  localStorage.setItem('vehiclelinq.user', JSON.stringify(session.user));
+
+  if (session.user.companyId) {
+    localStorage.setItem('vehiclelinq.companyId', session.user.companyId);
+  } else if (persistedCompanyId) {
+    localStorage.setItem('vehiclelinq.companyId', persistedCompanyId);
+  }
+
+  useSessionStore.setState((state) => ({
+    ...state,
+    accessToken: session.accessToken,
+    refreshToken: session.refreshToken,
+    user: session.user,
+    currentCompanyId: session.user.companyId ?? state.currentCompanyId ?? persistedCompanyId ?? null,
+  }));
+}
 
 async function request<T>(
   path: string,
   options: RequestInit = {},
   accessToken?: string | null,
   refreshToken?: string | null,
+  retryOnUnauthorized = true,
 ): Promise<T> {
+  const session = useSessionStore.getState();
+  const resolvedAccessToken = accessToken ?? session.accessToken;
+  const resolvedRefreshToken = refreshToken ?? session.refreshToken;
+
   // #region debug-point D:company-create-request
-  if (path === '/platform/companies' && options.method === 'POST') fetch('http://127.0.0.1:7777/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'company-create-500',runId:'pre-fix',hypothesisId:'D',location:'apps/web/src/lib/api.ts:22',msg:'[DEBUG] Company create request started',data:{path,method:options.method,hasAccessToken:Boolean(accessToken),body:typeof options.body === 'string' ? options.body : null},ts:Date.now()})}).catch(()=>{});
+  if (path === '/platform/companies' && options.method === 'POST') fetch('http://127.0.0.1:7777/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'company-create-500',runId:'pre-fix',hypothesisId:'D',location:'apps/web/src/lib/api.ts:45',msg:'[DEBUG] Company create request started',data:{path,method:options.method,hasAccessToken:Boolean(resolvedAccessToken),body:typeof options.body === 'string' ? options.body : null},ts:Date.now()})}).catch(()=>{});
   // #endregion
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      ...(refreshToken ? { 'x-refresh-token': refreshToken } : {}),
+      ...(resolvedAccessToken ? { Authorization: `Bearer ${resolvedAccessToken}` } : {}),
+      ...(resolvedRefreshToken ? { 'x-refresh-token': resolvedRefreshToken } : {}),
       ...options.headers,
     },
   });
 
+  if (
+    response.status === 401 &&
+    retryOnUnauthorized &&
+    path !== '/auth/login' &&
+    path !== '/auth/refresh' &&
+    resolvedRefreshToken
+  ) {
+    try {
+      const nextSession = await request<AuthResponse>(
+        '/auth/refresh',
+        { method: 'POST' },
+        null,
+        resolvedRefreshToken,
+        false,
+      );
+      syncRefreshedSession(nextSession);
+
+      return request<T>(path, options, nextSession.accessToken, nextSession.refreshToken, false);
+    } catch {
+      useSessionStore.getState().clear();
+      throw new Error('Sessie verlopen. Log opnieuw in.');
+    }
+  }
+
   if (!response.ok) {
     const raw = await response.text();
     // #region debug-point D:company-create-response-error
-    if (path === '/platform/companies' && options.method === 'POST') fetch('http://127.0.0.1:7777/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'company-create-500',runId:'pre-fix',hypothesisId:'D',location:'apps/web/src/lib/api.ts:35',msg:'[DEBUG] Company create request failed',data:{status:response.status,statusText:response.statusText,raw},ts:Date.now()})}).catch(()=>{});
+    if (path === '/platform/companies' && options.method === 'POST') fetch('http://127.0.0.1:7777/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'company-create-500',runId:'pre-fix',hypothesisId:'D',location:'apps/web/src/lib/api.ts:76',msg:'[DEBUG] Company create request failed',data:{status:response.status,statusText:response.statusText,raw},ts:Date.now()})}).catch(()=>{});
     // #endregion
     let message = raw || 'API request mislukt';
 
@@ -50,11 +102,16 @@ async function request<T>(
       // Gebruik de tekstresponse als deze geen JSON is.
     }
 
+    if (response.status === 401) {
+      useSessionStore.getState().clear();
+      message = 'Sessie verlopen. Log opnieuw in.';
+    }
+
     throw new Error(message);
   }
 
   // #region debug-point D:company-create-response-success
-  if (path === '/platform/companies' && options.method === 'POST') fetch('http://127.0.0.1:7777/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'company-create-500',runId:'pre-fix',hypothesisId:'D',location:'apps/web/src/lib/api.ts:54',msg:'[DEBUG] Company create request succeeded',data:{status:response.status},ts:Date.now()})}).catch(()=>{});
+  if (path === '/platform/companies' && options.method === 'POST') fetch('http://127.0.0.1:7777/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'company-create-500',runId:'pre-fix',hypothesisId:'D',location:'apps/web/src/lib/api.ts:103',msg:'[DEBUG] Company create request succeeded',data:{status:response.status},ts:Date.now()})}).catch(()=>{});
   // #endregion
   return response.json() as Promise<T>;
 }
