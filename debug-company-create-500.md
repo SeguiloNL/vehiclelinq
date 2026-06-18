@@ -21,7 +21,9 @@ Status: OPEN
 - API-logs tonen geen fout in `CompaniesService.create()`.
 - De request faalt eerder in `AuthGuard.canActivate()` met `TokenExpiredError: jwt expired`.
 - Daardoor werd een verlopen sessie als ongehandelede exception zichtbaar en zag de gebruiker een generieke serverfout.
+- Na de auth-fix komt de request verder, maar crasht vervolgens in `RolesGuard.canActivate()` omdat `this.reflector` `undefined` is en `getAllAndOverride` niet aangeroepen kan worden.
 
 ## Beslissing
 - Fix 1: verlopen of ongeldige JWT in de guard expliciet omzetten naar `401 Unauthorized`.
 - Fix 2: frontend laat bij `401` eerst een refresh-token poging doen en ruimt anders de sessie op met een begrijpelijke melding.
+- Fix 3: `Reflector` in `RolesGuard` expliciet injecteren zodat rolcontrole niet meer op runtime metadata stukloopt.
